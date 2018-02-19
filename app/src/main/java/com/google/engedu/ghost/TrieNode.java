@@ -71,6 +71,10 @@ public class TrieNode {
         if (temp == null){
             return "noWord";
         }
+        if(temp.isWord)
+        {
+            return "sameAsPrefix";
+        }
         // get a random word
         ArrayList<String> charsNoWord = new ArrayList<>();
         ArrayList<String> charsWord = new ArrayList<>();
