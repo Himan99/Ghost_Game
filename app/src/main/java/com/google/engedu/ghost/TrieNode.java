@@ -23,7 +23,7 @@ import java.util.Random;
 public class TrieNode {
     private HashMap<String, TrieNode> children;
     private boolean isWord;
-
+    Random random=new Random();
     public TrieNode() {
         children = new HashMap<>();
         isWord = false;
@@ -111,30 +111,52 @@ public class TrieNode {
     }
     public String getGoodWordStartingWith (String s,int whoEndsFirst)
     {
+        String t;
         TrieNode temp = SearchNode(s);
+        if(s==null)
+        {
+            temp = this;
+        }
         if (temp == null){
             return "noWord";
         }
-        else if(temp.isWord==true)
+        else if(temp.isWord)
         {
             return "sameAsPrefix";
         }
         else
         {
-            return rec(temp,s.length(),whoEndsFirst);
+            t=rec(temp,s.length()+1,whoEndsFirst);
+            s+=t;
+            return s;
         }
     }
     private String rec (TrieNode n,int len,int WhoEndsFirst)
     {
-        String s=null;
-        String t=null;
+        String s="",t;
+        ArrayList<String> charNoWords=new ArrayList<>();
+        ArrayList<String> charWords=new ArrayList<>();
         for(String c : n.children.keySet())
         {
-            if(n.children.get(c).isWord&&len%2==WhoEndsFirst)
-                return c;
-            t=rec(n.children.get(c),len+1,WhoEndsFirst);
-            if(t!=null)
-                s+=c+t;
+            if(n.children.get(c).isWord)
+                charWords.add(c);
+            else if(!n.children.get(c).isWord)
+                charNoWords.add(c);
+        }
+        System.out.println("------>"+charNoWords+" "+charWords);
+        if((charWords.size()>0&&len%2==WhoEndsFirst)||charNoWords.size()==0)
+        {
+            return s=charWords.get(new Random().nextInt(charWords.size()));
+        }
+        else
+        {
+            int r=random.nextInt(charNoWords.size());
+            for (int i=0;i<charNoWords.size();i++)
+            {
+                t=rec(n.children.get(charNoWords.get(i+r%charNoWords.size())),len+1,WhoEndsFirst);
+                if(t.length()>0)
+                    return s+=charNoWords.get(i+r%charNoWords.size())+t;
+            }
         }
         return s;
     }
